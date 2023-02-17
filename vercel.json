@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "src/routes/index.js",
+        "src": "index.js",
         "use": "@now/node",
         "config": {
           "maxLambdaSize": "15mb"
@@ -12,7 +12,7 @@
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "index.js"
+        "dest": "src/routes/index.js"
       }
     ],
     "env": {
