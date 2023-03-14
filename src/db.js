@@ -17,7 +17,10 @@ const {
 });
 const basename = path.basename(__filename); */
 
-const sequelize = new Sequelize("postgres://lbeenbwa:p-yp31aHwoHspmXTWoyifCVeqrpXeWhd@motty.db.elephantsql.com/lbeenbwa");
+const sequelize = new Sequelize("postgres://lbeenbwa:p-yp31aHwoHspmXTWoyifCVeqrpXeWhd@motty.db.elephantsql.com/lbeenbwa", {
+  logging: false, // set to console.log to see the raw SQL queries
+  native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+});
 const basename = path.basename(__filename);
 
 const modelDefiners = [];
