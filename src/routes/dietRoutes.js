@@ -31,11 +31,13 @@ dietRouter.get('/', async (req, res) => {
         })
     
         const dietsOnDb = await Diet.bulkCreate(formatForDb)
+        res.set('Access-Control-Allow-Origin', '*');
         
         return res.status(201).json(dietsOnDb)
 
     }else{
         const dietsOnDb = await Diet.findAll()
+        res.set('Access-Control-Allow-Origin', '*');
         return res.status(201).json(dietsOnDb)
     }
 

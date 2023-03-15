@@ -12,13 +12,12 @@ const recipesRouter = express.Router()
 
 recipesRouter.get('/', async (req, res) => {
 
-
     try{
         let { name } = req.query
 
         let response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${YOUR_API_KEY}&number=${100}&addRecipeInformation=true`)
         let respuesta = await response.data.results
-
+        res.set('Access-Control-Allow-Origin', '*');
         let mainData = respuesta.map(recipe => {
             return {
                 id: recipe.id,
@@ -48,6 +47,7 @@ recipesRouter.get('/', async (req, res) => {
                 ]
             })
             let reverse = recipesOnDb.reverse()
+            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).json([...reverse, ...mainData])
 
         }else{
@@ -61,6 +61,7 @@ recipesRouter.get('/', async (req, res) => {
             });
 
             let totalFiltered = [...filteredOnDb, ...filteredApi]
+            res.set('Access-Control-Allow-Origin', '*');
 
             if(totalFiltered.length)
                 return res.status(200).json(totalFiltered)
@@ -93,6 +94,7 @@ recipesRouter.get('/:idReceta', async (req, res) => {
                     }
                 ]
             })
+            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).json(clickedRecipe)
         }else{
             
@@ -112,10 +114,11 @@ recipesRouter.get('/:idReceta', async (req, res) => {
                                 respuesta.analyzedInstructions[0].steps.map(steps => steps.step)
 
                 }
+                res.set('Access-Control-Allow-Origin', '*');
                 return res.status(200).json(mainData)
 
             }else{
-                
+                res.set('Access-Control-Allow-Origin', '*');
                 return res.status(200).send('No matches found')
 
             }
@@ -127,14 +130,17 @@ recipesRouter.get('/:idReceta', async (req, res) => {
 })
 
 recipesRouter.post('/', async (req, res) => {
+    
     let {name, summarizeDish, healthScore, steps, image, dishType, dietId} = req.body 
     try{
 
         if(!name){
+            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).send("Please add a recipe name")
         }
 
         if(!summarizeDish){
+            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).send("Please add a recipe summary")
         }
 
@@ -148,7 +154,7 @@ recipesRouter.post('/', async (req, res) => {
         });
 
         await newRecipe.addDiets(dietId)
-
+        res.set('Access-Control-Allow-Origin', '*');
         res.status(200).json(newRecipe);
 
     }catch(e){
