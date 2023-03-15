@@ -9,7 +9,13 @@ const router = Router();
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
-router.use(cors());
+
+const corsOptions = {
+    origin: 'http://localhost:3000/'
+};
+  
+app.use(cors(corsOptions));
+
 router.use('/recipes', recipesRouter)
 router.use('/diets', dietRouter)
 
