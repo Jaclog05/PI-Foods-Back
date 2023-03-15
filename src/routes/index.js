@@ -11,7 +11,7 @@ const router = Router();
 // Ejemplo: router.use('/auth', authRouter);
 
 const corsOptions = {
-    origin: 'http://localhost:3000/'
+    origin: "https://pi-foods-front-ten.vercel.app"
 };
   
 router.use(cors(corsOptions));
