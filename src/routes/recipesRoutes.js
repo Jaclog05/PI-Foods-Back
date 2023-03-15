@@ -11,7 +11,7 @@ const {
 const recipesRouter = express.Router()
 
 recipesRouter.get('/', async (req, res) => {
-
+    res.set('Access-Control-Allow-Origin', '*');
 
     try{
         let { name } = req.query
@@ -76,6 +76,7 @@ recipesRouter.get('/', async (req, res) => {
 })
 
 recipesRouter.get('/:idReceta', async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     try{
 
         let { idReceta } = req.params
@@ -127,6 +128,7 @@ recipesRouter.get('/:idReceta', async (req, res) => {
 })
 
 recipesRouter.post('/', async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     let {name, summarizeDish, healthScore, steps, image, dishType, dietId} = req.body 
     try{
 

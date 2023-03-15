@@ -19,6 +19,7 @@ const dietsObj = {
 }
 
 dietRouter.get('/', async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
 
     const { count, rows } = await Diet.findAndCountAll();
 
