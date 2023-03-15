@@ -14,7 +14,7 @@ const corsOptions = {
     origin: 'http://localhost:3000/'
 };
   
-app.use(cors(corsOptions));
+router.use(cors(corsOptions));
 
 router.use('/recipes', recipesRouter)
 router.use('/diets', dietRouter)
