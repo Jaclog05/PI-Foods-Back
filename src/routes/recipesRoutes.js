@@ -1,38 +1,14 @@
-require('dotenv').config();
 let express = require('express')
 let { Recipe, Diet } = require('../db')
-let axios = require('axios')
 const { Op } = require("sequelize");
-
-const {
-    YOUR_API_KEY
-  } = process.env;
-
+const { getRecipes, getRecipeById } = require('../controllers')
 const recipesRouter = express.Router()
 
 recipesRouter.get('/', async (req, res) => {
 
     try{
+        const mainData = await getRecipes()
         let { name } = req.query
-
-        let response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${YOUR_API_KEY}&number=${100}&addRecipeInformation=true`)
-        let respuesta = await response.data.results
-        res.set('Access-Control-Allow-Origin', '*');
-        let mainData = respuesta.map(recipe => {
-            return {
-                id: recipe.id,
-                name: recipe.title,
-                image: recipe.image,
-                name: recipe.title,
-                dishType: recipe.dishTypes,
-                summarizeDish: recipe.summary,
-                healthScore: recipe.healthScore,
-                steps: !recipe.analyzedInstructions.length ?
-                recipe.analyzedInstructions[0] :
-                recipe.analyzedInstructions[0].steps.map(steps => `${steps.number}. ${steps.step}`),
-                diets: recipe.diets
-            }
-        })
 
         if(!name){
             let recipesOnDb = await Recipe.findAll({
@@ -47,21 +23,19 @@ recipesRouter.get('/', async (req, res) => {
                 ]
             })
             let reverse = recipesOnDb.reverse()
-            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).json([...reverse, ...mainData])
 
         }else{
-                let filteredApi = mainData.filter(recipe => recipe.name.toLowerCase().includes(name.toLowerCase()))
-                let filteredOnDb = await Recipe.findAll({
-                    where: {
-                        name: {
-                            [Op.iLike]: `%${name}%`
-                        }
+            let filteredApi = mainData.filter(recipe => recipe.name.toLowerCase().includes(name.toLowerCase()))
+            let filteredOnDb = await Recipe.findAll({
+                where: {
+                    name: {
+                        [Op.iLike]: `%${name}%`
                     }
+                }
             });
 
             let totalFiltered = [...filteredOnDb, ...filteredApi]
-            res.set('Access-Control-Allow-Origin', '*');
 
             if(totalFiltered.length)
                 return res.status(200).json(totalFiltered)
@@ -72,17 +46,19 @@ recipesRouter.get('/', async (req, res) => {
         }
 
     }catch(e){
-        return res.status(404).json({error: e.message})
+        if(e.response.status === 402){
+            return res.status(402).json({message: "Max requests reached. Please try Again Tomorrow"})
+        }else{
+            return res.status(404).json({message: e.message})
+        }
     }
 })
 
 recipesRouter.get('/:idReceta', async (req, res) => {
+
     try{
-
         let { idReceta } = req.params
-
-        if(isNaN(idReceta)){
-            
+        if(isNaN(idReceta)){  
             let clickedRecipe = await Recipe.findByPk(idReceta, {
                 include: [
                     {
@@ -94,53 +70,30 @@ recipesRouter.get('/:idReceta', async (req, res) => {
                     }
                 ]
             })
-            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).json(clickedRecipe)
-        }else{
-            
-            let response = await axios.get(`https://api.spoonacular.com/recipes/${idReceta}/information?apiKey=${YOUR_API_KEY}`)
-            let respuesta = await response.data
 
-            if(!respuesta.length){
-                let mainData = {
-                    image: respuesta.image,
-                    name: respuesta.title,
-                    dishType: respuesta.dishTypes,
-                    diets: respuesta.diets,
-                    summarizeDish: respuesta.summary,
-                    healthScore: respuesta.healthScore,
-                    steps: !respuesta.analyzedInstructions.length ?
-                                respuesta.analyzedInstructions[0] :
-                                respuesta.analyzedInstructions[0].steps.map(steps => steps.step)
-
-                }
-                res.set('Access-Control-Allow-Origin', '*');
-                return res.status(200).json(mainData)
-
-            }else{
-                res.set('Access-Control-Allow-Origin', '*');
-                return res.status(200).send('No matches found')
-
-            }
+        }else{   
+            const foundRecipe = await getRecipeById(idReceta)
+            return res.status(200).json(foundRecipe)
         }
 
     }catch(e){
-        return res.status(404).json(e)
+        if(e.response.status === 402){
+            return res.status(402).json({message: "Max requests reached. Please try Again Tomorrow"})
+        }else{
+            return res.status(404).json({message: "Recipe not found"})
+        }
     }
 })
 
 recipesRouter.post('/', async (req, res) => {
-    
     let {name, summarizeDish, healthScore, steps, image, dishType, dietId} = req.body 
     try{
 
         if(!name){
-            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).send("Please add a recipe name")
         }
-
         if(!summarizeDish){
-            res.set('Access-Control-Allow-Origin', '*');
             return res.status(200).send("Please add a recipe summary")
         }
 
@@ -154,7 +107,20 @@ recipesRouter.post('/', async (req, res) => {
         });
 
         await newRecipe.addDiets(dietId)
-        res.set('Access-Control-Allow-Origin', '*');
+        res.status(200).json(newRecipe);
+
+    }catch(e){
+        res.status(404).json({error: e.message})
+    }
+})
+
+recipesRouter.delete('/:recipeId', async (req, res) => {
+    let { recipeId } = req.params
+
+    try{
+        const newRecipe = await Recipe.destroy({
+            where: { id: recipeId },
+        });
         res.status(200).json(newRecipe);
 
     }catch(e){
