@@ -29,9 +29,9 @@ const mainDataFunction = (recipe) => {
         dishType: recipe.dishTypes,
         summarizeDish: recipe.summary,
         healthScore: recipe.healthScore,
-        /* steps: !recipe.analyzedInstructions.length ?
+        steps: !recipe.analyzedInstructions.length ?
             recipe.analyzedInstructions[0] :
-            recipe.analyzedInstructions[0].steps.map(steps => `${steps.number}. ${steps.step}`), */
+            recipe.analyzedInstructions[0].steps.map(steps => `${steps.number}. ${steps.step}`),
         diets: recipe.diets
     }
 }
@@ -47,12 +47,10 @@ const createDiets = () => {
 
 const getRecipes = async() => {
         let response = await axios.get(`
-            ${API_DOMAIN}complexSearch?apiKey=${YOUR_API_KEY}&number=${9}&addRecipeInformation=true`
+            ${API_DOMAIN}complexSearch?apiKey=${YOUR_API_KEY}&number=${9}&addRecipeInformation=true&addRecipeInstructions=true`
         )
         if(response.hasOwnProperty('status')){
-            console.log('response = ', response)
             let respuesta = await response.data.results
-            console.log('respuesta = ', respuesta)
             let mainData = respuesta.map(recipe => mainDataFunction(recipe))
             return mainData
         }else{
