@@ -50,10 +50,11 @@ const getRecipes = async() => {
             ${API_DOMAIN}complexSearch?apiKey=${YOUR_API_KEY}&number=${9}&addRecipeInformation=true`
         )
         if(response.hasOwnProperty('status')){
+            console.log('response = ', response)
             let respuesta = await response.data.results
-            return response
-            /* let mainData = respuesta.map(recipe => mainDataFunction(recipe))
-            return mainData */
+            console.log('respuesta = ', respuesta)
+            let mainData = respuesta.map(recipe => mainDataFunction(recipe))
+            return mainData
         }else{
             return {
                 error: response.message
