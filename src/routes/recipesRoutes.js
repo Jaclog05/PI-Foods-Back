@@ -37,13 +37,13 @@ recipesRouter.get('/', async (req, res) => {
             });
             console.log('filteredOnDb = ', filteredOnDb) */
 
-            let totalFiltered = [
-                /* ...filteredOnDb, */
+           /*  let totalFiltered = [
+                ...filteredOnDb,
                 ...filteredApi
-            ]
+            ] */
 
-            if(totalFiltered.length)
-                return res.status(200).json(totalFiltered)
+            if(filteredApi.length)
+                return res.status(200).json(filteredApi)
             else{
                 return res.status(200).json({message: "No results found"})
             }
