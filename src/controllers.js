@@ -29,7 +29,7 @@ const mainDataFunction = (recipe) => {
         dishType: recipe.dishTypes,
         summarizeDish: recipe.summary,
         healthScore: recipe.healthScore,
-        steps: !recipe.analyzedInstructions.length ?
+        steps: !recipe.analyzedInstructions ?
             recipe.analyzedInstructions[0] :
             recipe.analyzedInstructions[0].steps.map(steps => `${steps.number}. ${steps.step}`),
         diets: recipe.diets
