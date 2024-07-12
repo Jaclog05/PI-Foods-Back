@@ -29,7 +29,7 @@ const mainDataFunction = (recipe) => {
         dishType: recipe.dishTypes,
         summarizeDish: recipe.summary,
         healthScore: recipe.healthScore,
-        steps: !recipe.analyzedInstructions ?
+        steps: !recipe.analyzedInstructions.length ?
             recipe.analyzedInstructions[0] :
             recipe.analyzedInstructions[0].steps.map(steps => `${steps.number}. ${steps.step}`),
         diets: recipe.diets
@@ -51,8 +51,9 @@ const getRecipes = async() => {
         )
         if(response.hasOwnProperty('status')){
             let respuesta = await response.data.results
-            let mainData = respuesta.map(recipe => mainDataFunction(recipe))
-            return mainData
+            return response
+            /* let mainData = respuesta.map(recipe => mainDataFunction(recipe))
+            return mainData */
         }else{
             return {
                 error: response.message
