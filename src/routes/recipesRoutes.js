@@ -27,7 +27,6 @@ recipesRouter.get('/', async (req, res) => {
 
         }else{
             let filteredApi = mainData.filter(recipe => recipe.name.toLowerCase().includes(name.toLowerCase()))
-            /* console.log('filteredApi = ', filteredApi)
             let filteredOnDb = await Recipe.findAll({
                 where: {
                     name: {
@@ -35,15 +34,11 @@ recipesRouter.get('/', async (req, res) => {
                     }
                 }
             });
-            console.log('filteredOnDb = ', filteredOnDb) */
 
-           /*  let totalFiltered = [
-                ...filteredOnDb,
-                ...filteredApi
-            ] */
+            let totalFiltered = [...filteredOnDb, ...filteredApi]
 
-            if(true)
-                return res.status(200).json({message: "mainData", mainData: mainData})
+            if(totalFiltered.length)
+                return res.status(200).json(totalFiltered)
             else{
                 return res.status(200).json({message: "No results found"})
             }
