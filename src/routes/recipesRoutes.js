@@ -42,7 +42,7 @@ recipesRouter.get('/', async (req, res) => {
                 ...filteredApi
             ] */
 
-            if(mainData.length)
+            if(true)
                 return res.status(200).json({message: "mainData", mainData: mainData})
             else{
                 return res.status(200).json({message: "No results found"})
