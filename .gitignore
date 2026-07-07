@@ -104,12 +104,8 @@ dist
 .tern-port
 
 # package-lock.json
-package-lock.json
 
 apiKeys/
-<<<<<<< HEAD
 .vercel
-=======
 
 vercel.json
->>>>>>> 6909f2855a9e7f2adfba6ebdb827768f082b665e
